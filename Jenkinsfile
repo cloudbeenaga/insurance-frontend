@@ -1,10 +1,11 @@
-pipeline{
+pipeline {
   agent none
   stages {
-    stage('Say Hello') {
-      agent{ label 'nodejs-app'}
+    stage('Test') {
+      agent { label 'nodejs-app' }
       steps {
-        contanier('nodejs') {
+        sh 'java -version'
+        container('nodejs') {
           echo 'Hello World!'   
           sh 'node --version'
         }
