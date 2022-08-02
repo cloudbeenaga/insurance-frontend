@@ -4,8 +4,10 @@ pipeline{
     stage('Say Hello') {
       agent{ label 'nodejs-app'}
       steps {
-        echo 'Hello World!'   
-        sh 'java -version'
+        contanier('nodejs') {
+          echo 'Hello World!'   
+          sh 'java -version'
+        }
       }
     }
   }
