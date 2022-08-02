@@ -1,26 +1,47 @@
 pipeline {
   agent none
+  environment {
+    FAVORITE_COLOR = 'RED'
+  }
   stages {
     stage('Test') {
+      when {
+        beforeAgent true
+        not { branch 'main' }
+      }
       agent {
         kubernetes {
           yamlFile 'nodejs-pod.yaml'
         }
       }
       steps {
-        container('nodejs') {
-          echo 'Hello World!'   
+        container('nodejs') { 
           sh 'node --version'
         }
       }
     }
-    stage('Build and Push Image') {
+    stage('Main Branch Stages') {
       when {
         beforeAgent true
         branch 'main'
       }
-      steps {
-        echo "TODO - build and push image"
+      stages {
+        stage('Build and Push Image') {
+          steps {
+            echo "FAVORITE_COLOR is $FAVORITE_COLOR"  
+            echo "TODO - build and push image"
+          }
+        }
+        stage('Deploy') {
+          agent any
+          environment {
+            FAVORITE_COLOR = 'BLUE'
+            SERVICE_CREDS = credentials('example-service-username-password')
+          }
+          steps {
+            sh 'echo TODO - deploy to $FAVORITE_COLOR with SERVICE_CREDS: username=$SERVICE_CREDS_USR password=$SERVICE_CREDS_PSW'
+          }
+        }
       }
     }
   }
